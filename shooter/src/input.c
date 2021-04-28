@@ -1,5 +1,4 @@
-#include "common.h"
-
+#include "input.h"
 
 void input_handling(void)
 {

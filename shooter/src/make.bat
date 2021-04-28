@@ -52,7 +52,10 @@ echo [!] Successfully Linked Objects!
 
 popd
 
-call %EXE%
+if "%1"=="run" (
+    echo [!] Running executable!
+    call %EXE%
+)
 
 echo [!] DONE! 
 

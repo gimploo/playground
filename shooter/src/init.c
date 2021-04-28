@@ -1,5 +1,4 @@
-#include "common.h"
-
+#include "init.h"
 
 void sdl_init(void)
 {
@@ -28,6 +27,12 @@ void sdl_init(void)
 		game.renderer = SDL_CreateRenderer(game.window, -1, render_flags);
 		if (!game.renderer) {
 				fprintf(stderr, "Error: sdl failed to create renderer\n");
+				exit(1);
+		}
+
+		
+		if(!IMG_Init(IMG_INIT_PNG|IMG_INIT_JPG)) {
+				fprintf(stderr, "Error: img_init failed to initalize\n");
 				exit(1);
 		}
 		
