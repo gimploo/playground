@@ -1,1 +1,1 @@
-# SDL_TrashBin
+# SDL and Opengl Templates
