@@ -2,15 +2,22 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <stdbool.h>
-#include "../lib/simple/open_window.h"
+
+// comment this line not have opengl used for rendering
+#include <GL/glew.h> 
+
+//poglib repo
+#include "../lib/simple/simple_window.h"
 
 
 int main(void) 
 {
     
-    Window window = window_init(SDL_INIT_VIDEO);
+    SimpleWindow window = window_init(SDL_INIT_VIDEO);
 
     window_event_handler(&window);
+
+    window_destroy(&window);
 
     
     return 0;
