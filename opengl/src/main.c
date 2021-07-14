@@ -73,59 +73,111 @@ GLuint gl_Create_Shader(const char *vertexShaderSource, const char *fragmentShad
     return shaderProgram;
 }
 
-void gl_Draw_Triangle(float arr[], size_t arr_size)
+void gl_Draw_Triangle(float vertices[], size_t size)
+{
+    GLuint VAO;
+    glGenVertexArrays(1, &VAO); 
+    glBindVertexArray(VAO); 
+
+    GLuint VBO;
+    glGenBuffers(1, &VBO); 
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_STATIC_DRAW);
+
+    /*GLuint EBO;*/
+    /*glGenBuffers(1, &EBO); glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);*/
+    /*glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices_size, indices, GL_STATIC_DRAW);*/
+
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+
+    glBindVertexArray(VAO);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glBindVertexArray(0);
+
+}
+
+void gl_Draw_Rectangle(float vertices[], size_t size, GLuint indices[], size_t indices_size)
 {
 
-    GLuint vertex_buffer_obj;
-    glGenBuffers(1, &vertex_buffer_obj);
-    glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_obj);
-    glBufferData(GL_ARRAY_BUFFER, arr_size, arr, GL_STATIC_DRAW);
+    GLuint VAO;
+    glGenVertexArrays(1, &VAO); 
+    glBindVertexArray(VAO);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    GLuint VBO, EBO;
+    glGenBuffers(1, &VBO);
+    glGenBuffers(1, &EBO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices_size, indices, GL_STATIC_DRAW);
+
     glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glBindBuffer(GL_ARRAY_BUFFER, 0); 
+    glBindVertexArray(0);
+
+    
+    glBindVertexArray(VAO);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0);
+
 
 }
 
 int main(void) 
 {
-    float vertices[] = {
+    float triangle[] = {
         -0.5f, -0.5f, 0.0f,
          0.5f, -0.5f, 0.0f,
          0.0f,  0.5f, 0.0f
+    };
+
+    float rectangle[] = {
+        0.5f,  0.5f, 0.0f,  // top right
+        0.5f, -0.5f, 0.0f,  // bottom right
+       -0.5f, -0.5f, 0.0f,  // bottom left
+       -0.5f,  0.5f, 0.0f   // top left
+    };
+
+    GLuint rec_indices[] = {
+        0, 1, 3,
+        1, 2, 3
     };
     
     SimpleWindow window = window_init(SDL_INIT_VIDEO);
     /*printf("GL version %s\n", glGetString(GL_VERSION)); */
 
 #ifdef __gl_h_
-    GLuint shaderProgram = gl_Create_Shader(vertexShaderSource, 
+    GLuint shaderProgram = gl_Create_Shader(vertexShaderSource, fragmentShaderSource);
 #endif
-                                            fragmentShaderSource);
 
-    /*window_event_handler(&window);*/
-    SDL_Event event;
+    bool toggle = false;
     while (window.is_window_open) 
     {
-        while(SDL_PollEvent(&event) > 0) 
-        {
-            switch (event.type) 
-            {
-                case SDL_QUIT:
-                    window.is_window_open = false;
-                    break;
-            }
-
-        }
+        window_event_process_user_input(&window);
+        
     #ifdef __gl_h_
-    
-
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
         glUseProgram(shaderProgram);
-        gl_Draw_Triangle(vertices, sizeof(vertices));
+
+        if (toggle)
+            gl_Draw_Triangle(triangle, sizeof(triangle));
+        else 
+            gl_Draw_Rectangle(rectangle, 
+                          sizeof(rectangle),
+                          rec_indices,
+                          sizeof(rec_indices));
+
+        toggle = !toggle;
 
         SDL_GL_SwapWindow(window.window_handle);
     #else
