@@ -9,7 +9,7 @@
 #include <GL/glew.h> 
 
 //poglib repo
-#include "../lib/simple/simple_window.h"
+#include "../lib/simple/win/simple_window.h"
 
 
 const char * const vertexShaderSource = 
@@ -33,7 +33,7 @@ GLuint gl_Create_Shader(const char *vertexShaderSource, const char *fragmentShad
 {
     int status;
     char error_log[KB];
-
+    
     GLuint vertexShader;
     vertexShader = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
@@ -92,12 +92,12 @@ void gl_Draw_Triangle(float vertices[], size_t size)
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
+    glBindVertexArray(0); 
 
     glBindVertexArray(VAO);
     glDrawArrays(GL_TRIANGLES, 0, 3);
-    glBindVertexArray(0);
 
+    glBindVertexArray(0);
 }
 
 void gl_Draw_Rectangle(float vertices[], size_t size, GLuint indices[], size_t indices_size)
@@ -123,12 +123,10 @@ void gl_Draw_Rectangle(float vertices[], size_t size, GLuint indices[], size_t i
     glBindBuffer(GL_ARRAY_BUFFER, 0); 
     glBindVertexArray(0);
 
-    
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
     glBindVertexArray(0);
-
-
 }
 
 int main(void) 
@@ -154,11 +152,19 @@ int main(void)
     SimpleWindow window = window_init(SDL_INIT_VIDEO);
     /*printf("GL version %s\n", glGetString(GL_VERSION)); */
 
+    int result;
+    glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &result);
+    printf("MAX # vertex attributes supported %i\n", result);
+
 #ifdef __gl_h_
     GLuint shaderProgram = gl_Create_Shader(vertexShaderSource, fragmentShaderSource);
 #endif
 
+
     bool toggle = false;
+
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
     while (window.is_window_open) 
     {
         window_event_process_user_input(&window);
@@ -169,13 +175,11 @@ int main(void)
 
         glUseProgram(shaderProgram);
 
+
         if (toggle)
             gl_Draw_Triangle(triangle, sizeof(triangle));
         else 
-            gl_Draw_Rectangle(rectangle, 
-                          sizeof(rectangle),
-                          rec_indices,
-                          sizeof(rec_indices));
+            gl_Draw_Rectangle(rectangle, sizeof(rectangle), rec_indices, sizeof(rec_indices));
 
         toggle = !toggle;
 
