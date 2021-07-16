@@ -1,7 +1,7 @@
 CC = gcc
 CCFLAGS = -W -Wall -Wextra -pedantic -g
 
-LINKERFLAGS = -lSDL2 -lGLEW -lGLU -lGL 
+LINKERFLAGS = -lSDL2 -lGLEW -lGLU -lGL -lm
 
 all: gui
 
