@@ -9,7 +9,7 @@
 
 //poglib repo
 #include "../lib/simple/simple_window.h"
-#include "../lib/image/bitmap.h"
+/*#include "../lib/image/bitmap.h"*/
 
 
 const char * const vertexShaderSource = 
@@ -196,7 +196,7 @@ GLuint gl_Gen_2D_Texture(const char *file_path)
         0,
         GL_RGB,
         GL_UNSIGNED_BYTE,
-        &bitmap
+        &bitmap.pixels
      );
     glGenerateMipmap(GL_TEXTURE_2D);
     bitmap_destroy(&bitmap);
@@ -280,7 +280,7 @@ int main(void)
 #ifdef __gl_h_
     /*GLuint shaderProgram = gl_Create_Shader(vertexShaderSource, fragmentShaderSource);*/
     /*Shader prog = shader_init("src/rainbow.vs", "src/rainbow.fg"); */
-    Shader prog = shader_init("src/wood.vs", "src/wood.fg"); 
+    /*Shader prog = shader_init("src/wood.vs", "src/wood.fg"); */
     GLuint texture = gl_Gen_2D_Texture("res/sample.bmp");
 #endif
 
@@ -307,6 +307,7 @@ int main(void)
          *
          * --------------------------------------------------------
 #include <math.h>
+        # this is available in the shader header file
         float timeval = SDL_GetTicks();
         printf("time %lf\n", timeval);
         float greenval = (sin(timeval) / 2.0f + 0.5f);
@@ -330,13 +331,11 @@ int main(void)
          * Drawing a rainbow colored triangle with 2 attributes
          * enabled
          */
-        /*
-        shader_use(&prog);
-        gl_Draw_Rainbow_Triangle();
+        /*shader_use(&prog);*/
+        /*gl_Draw_Rainbow_Triangle();*/
 
-        */
 
-        shader_use(&prog);
+        /*shader_use(&prog);*/
         glBindTexture(GL_TEXTURE_2D, texture);  
         gl_draw_textured_rectangle();
 
@@ -348,7 +347,7 @@ int main(void)
 
 #ifdef __gl_h_
     /*glDeleteProgram(shaderProgram);*/
-    shader_destroy(&prog);
+    /*shader_destroy(&prog);*/
 #endif
 
     window_destroy(&window);
