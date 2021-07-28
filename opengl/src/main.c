@@ -9,7 +9,7 @@
 
 //poglib repo
 #include "../lib/simple/simple_window.h"
-/*#include "../lib/image/bitmap.h"*/
+#include "../lib/image/bitmap.h"
 
 
 const char * const vertexShaderSource = 
@@ -334,10 +334,14 @@ int main(void)
         /*shader_use(&prog);*/
         /*gl_Draw_Rainbow_Triangle();*/
 
-
-        /*shader_use(&prog);*/
-        glBindTexture(GL_TEXTURE_2D, texture);  
-        gl_draw_textured_rectangle();
+        /*
+         *
+         * 
+         * Check texture.h for texture stuff
+         *
+         *
+         *
+         */
 
         SDL_GL_SwapWindow(window.window_handle);
     #else
